@@ -38,7 +38,9 @@ def upload_files():
 
     reference.save(ref_path)
     target.save(video_path)
-
+print("Processing files:")
+print("Reference path:", ref_path)
+print("Video path:", video_path)
     apply_color_transfer(ref_path, video_path, output_path)
 
     return send_file(output_path, as_attachment=True)
