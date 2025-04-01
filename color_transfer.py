@@ -7,7 +7,8 @@ def apply_color_transfer(ref_path, video_path, output_path):
     vidcap = cv2.VideoCapture(video_path)
     success, frame = vidcap.read()
     if not success:
-        raise Exception("Could not read video")
+    print("ERROR: Failed to read video frame.")
+    raise Exception("Could not read video")
 
     ref_img = cv2.imread(ref_path)
     matched = transfer_color(ref_img, frame)
