@@ -30,7 +30,10 @@ def upload_files():
     target = request.files.get('video')
 
     if not reference or not target:
+        print("ERROR: Missing uploaded files")
         return 'Missing files', 400
+
+    print("Files uploaded:", reference.filename, target.filename)
 
     ref_path = os.path.join(UPLOAD_FOLDER, f'ref_{uuid.uuid4()}.jpg')
     video_path = os.path.join(UPLOAD_FOLDER, f'vid_{uuid.uuid4()}.mp4')
@@ -38,15 +41,23 @@ def upload_files():
 
     reference.save(ref_path)
     target.save(video_path)
-print("Processing files:")
-print("Reference path:", ref_path)
-print("Video path:", video_path)
-    apply_color_transfer(ref_path, video_path, output_path)
 
+    print("Saved files to:", ref_path, video_path)
+
+    # Confirm files saved
+    if not os.path.exists(ref_path) or not os.path.exists(video_path):
+        print("ERROR: One or both files failed to save.")
+        return 'Failed to save uploaded files', 500
+
+    try:
+        apply_color_transfer(ref_path, video_path, output_path)
+    except Exception as e:
+        print("ERROR during color transfer:", str(e))
+        return 'Processing failed: ' + str(e), 500
+
+    print("Color transfer complete. Returning file.")
     return send_file(output_path, as_attachment=True)
 
 if __name__ == '__main__':
-    import os
     port = int(os.environ.get("PORT", 10000))
-    print(f"Starting app on port {port}")
     app.run(host='0.0.0.0', port=port)
