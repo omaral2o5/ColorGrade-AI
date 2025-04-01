@@ -3,6 +3,7 @@ import numpy as np
 import subprocess
 
 def apply_color_transfer(ref_path, video_path, output_path):
+    print("Opening video:", video_path)
     vidcap = cv2.VideoCapture(video_path)
     success, frame = vidcap.read()
     if not success:
