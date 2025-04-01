@@ -17,6 +17,10 @@ def apply_color_transfer(ref_path, video_path, output_path):
     ref_lab = cv2.cvtColor(ref_img, cv2.COLOR_BGR2LAB)
     ref_mean, ref_std = cv2.meanStdDev(ref_lab)
 
+    # Reshape mean and std for broadcasting
+    ref_mean = ref_mean.reshape((1, 1, 3))
+    ref_std = ref_std.reshape((1, 1, 3))
+
     # Create temp frame directory
     frame_dir = 'temp_frames_' + str(uuid.uuid4())
     os.makedirs(frame_dir, exist_ok=True)
@@ -38,6 +42,10 @@ def apply_color_transfer(ref_path, video_path, output_path):
     while success:
         frame_lab = cv2.cvtColor(frame, cv2.COLOR_BGR2LAB)
         tgt_mean, tgt_std = cv2.meanStdDev(frame_lab)
+
+        # Reshape for broadcasting
+        tgt_mean = tgt_mean.reshape((1, 1, 3))
+        tgt_std = tgt_std.reshape((1, 1, 3))
 
         # Apply color transfer
         lab_result = (frame_lab - tgt_mean) * (ref_std / (tgt_std + 1e-6)) + ref_mean
